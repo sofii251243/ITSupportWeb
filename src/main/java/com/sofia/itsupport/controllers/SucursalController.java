@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class SucursalController {
         return "pong";
     }
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> crearSucursal(@Valid @RequestBody CrearSucursalRequest request) {
         try {
             SucursalResponseDTO nuevaSucursal = sucursalService.crearSucursal(request.getNombre());
@@ -40,6 +42,7 @@ public class SucursalController {
     // 2. OBTENER SUCURSAL POR ID (GET /api/sucursales/{id})
     // ===========================================
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> obtenerSucursal(@PathVariable Long id) {
         try {
             SucursalResponseDTO sucursal = sucursalService.obtenerSucursalPorId(id);
@@ -53,6 +56,7 @@ public class SucursalController {
     // 3. LISTAR TODAS LAS SUCURSALES (GET /api/sucursales)
     // ===========================================
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<SucursalResponseDTO>> listarTodas() {
         List<SucursalResponseDTO> sucursales = sucursalService.listarTodas();
         return ResponseEntity.ok(sucursales);
@@ -62,6 +66,7 @@ public class SucursalController {
     // 4. LISTAR SUCURSALES ACTIVAS (GET /api/sucursales/activas)
     // ===========================================
     @GetMapping("/activas")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<SucursalResponseDTO>> listarActivas() {
         List<SucursalResponseDTO> sucursales = sucursalService.listarActivas();
         return ResponseEntity.ok(sucursales);
@@ -71,6 +76,7 @@ public class SucursalController {
     // 5. ACTUALIZAR SUCURSAL (PUT /api/sucursales/{id})
     // ===========================================
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> actualizarSucursal(@PathVariable Long id, @RequestParam String nuevoNombre) {
         try {
             SucursalResponseDTO sucursal = sucursalService.actualizarSucursal(id, nuevoNombre);
@@ -84,6 +90,7 @@ public class SucursalController {
     // 6. DESACTIVAR SUCURSAL (PUT /api/sucursales/{id}/desactivar)
     // ===========================================
     @PutMapping("/{id}/desactivar")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> desactivarSucursal(@PathVariable Long id) {
         try {
             SucursalResponseDTO sucursal = sucursalService.desactivarSucursal(id);
@@ -97,6 +104,7 @@ public class SucursalController {
     // 7. ACTIVAR SUCURSAL (PUT /api/sucursales/{id}/activar)
     // ===========================================
     @PutMapping("/{id}/activar")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> activarSucursal(@PathVariable Long id) {
         try {
             SucursalResponseDTO sucursal = sucursalService.activarSucursal(id);

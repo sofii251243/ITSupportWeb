@@ -17,10 +17,6 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 public class AuthController {
 
-    static {
-        System.out.println("🔥 AuthController CARGADO");
-    }
-
     @Autowired
     private AuthService authService;
 
@@ -40,23 +36,4 @@ public class AuthController {
         }
     }
 
-    // ===========================================
-    // 2. CAMBIAR CONTRASEÑA (POST /api/auth/cambiar-contrasena)
-    // ===========================================
-    @PostMapping("/cambiar-contrasena")
-    public ResponseEntity<?> cambiarContrasena(
-            @RequestParam Long usuarioId,
-            @RequestParam String contrasenaActual,
-            @RequestParam String contrasenaNueva) {
-        try {
-            String mensaje = authService.cambiarContrasena(usuarioId, contrasenaActual, contrasenaNueva);
-            Map<String, String> response = new HashMap<>();
-            response.put("mensaje", mensaje);
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            Map<String, String> error = new HashMap<>();
-            error.put("error", e.getMessage());
-            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-        }
-    }
 }

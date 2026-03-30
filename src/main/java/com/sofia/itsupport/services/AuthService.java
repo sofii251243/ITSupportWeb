@@ -5,6 +5,7 @@ import com.sofia.itsupport.dto.response.LoginResponseDTO;
 import com.sofia.itsupport.entities.Usuario;
 import com.sofia.itsupport.enums.EstadoCuenta;
 import com.sofia.itsupport.repositories.UsuarioRepository;
+import com.sofia.itsupport.security.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,40 +13,39 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthService {
-    @Autowired
-    private PasswordEncoder passwordEncoder; // ← Inyectamos
 
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    // ===========================================
-    // LOGIN (temporal - sin encriptación)
-    // ===========================================
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtils jwtUtils;  // ← inyectamos la utilidad
+
     @Transactional(readOnly = true)
-        // Buscar usuario por email
-        public LoginResponseDTO login(LoginRequest request) {
-            Usuario usuario = usuarioRepository.findByEmail(request.getEmail())
-                    .orElseThrow(() -> new RuntimeException("Email o contraseña incorrectos"));
+    public LoginResponseDTO login(LoginRequest request) {
+        Usuario usuario = usuarioRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("Email o contraseña incorrectos"));
 
-            // Verificar la contraseña usando BCrypt
-            if (!passwordEncoder.matches(request.getContrasena(), usuario.getContrasenaHash())) {
-                throw new RuntimeException("Email o contraseña incorrectos");
-            }
+        if (!passwordEncoder.matches(request.getContrasena(), usuario.getContrasenaHash())) {
+            throw new RuntimeException("Email o contraseña incorrectos");
+        }
 
-
-            // Validar estado de la cuenta
         if (usuario.getEstadoCuenta() == EstadoCuenta.suspendido) {
             throw new RuntimeException("La cuenta está suspendida. Contacta al administrador.");
         }
 
-        // Crear respuesta
+        // Generar token JWT
+        String token = jwtUtils.generateToken(usuario.getEmail());
+
         LoginResponseDTO response = new LoginResponseDTO();
         response.setId(usuario.getId());
         response.setNombreUsuario(usuario.getNombreUsuario());
         response.setEmail(usuario.getEmail());
         response.setRol(usuario.getRol().name());
+        response.setToken(token);
         response.setMensaje("Login exitoso");
-
         return response;
     }
 
@@ -57,13 +57,13 @@ public class AuthService {
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        // Validar contraseña actual
-        if (!usuario.getContrasenaHash().equals(contrasenaActual)) {
+        // Validar contraseña actual usando BCrypt
+        if (!passwordEncoder.matches(contrasenaActual, usuario.getContrasenaHash())) {
             throw new RuntimeException("Contraseña actual incorrecta");
         }
 
-        // Actualizar contraseña
-        usuario.setContrasenaHash(contrasenaNueva);
+        // Hashear la nueva contraseña antes de guardar
+        usuario.setContrasenaHash(passwordEncoder.encode(contrasenaNueva));
         usuarioRepository.save(usuario);
 
         return "Contraseña actualizada correctamente";

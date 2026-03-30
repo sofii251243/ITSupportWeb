@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -166,4 +167,21 @@ public class UsuarioService {
 
         return dto;
     }
+    @Transactional
+    public String cambiarContrasena(Long usuarioId, String contrasenaActual, String contrasenaNueva) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // Verificar la contraseña actual con BCrypt
+        if (!passwordEncoder.matches(contrasenaActual, usuario.getContrasenaHash())) {
+            throw new RuntimeException("Contraseña actual incorrecta");
+        }
+
+        // Codificar la nueva contraseña
+        usuario.setContrasenaHash(passwordEncoder.encode(contrasenaNueva));
+        usuarioRepository.save(usuario);
+
+        return "Contraseña actualizada correctamente";
+    }
 }
+

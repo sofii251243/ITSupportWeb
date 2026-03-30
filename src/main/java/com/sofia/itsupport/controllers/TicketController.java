@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class TicketController {
     // 1. CREAR TICKET (POST /api/tickets)
     // ===========================================
     @PostMapping
+    @PreAuthorize("hasRole('ENCARGADO')")
     public ResponseEntity<?> crearTicket(@Valid @RequestBody CrearTicketRequest request) {
         try {
             TicketResponseDTO nuevoTicket = ticketService.crearTicket(request);
@@ -37,6 +39,7 @@ public class TicketController {
     // 2. OBTENER TICKET POR ID (GET /api/tickets/{id})
     // ===========================================
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('TECNICO')")
     public ResponseEntity<?> obtenerTicket(@PathVariable Long id) {
         try {
             TicketResponseDTO ticket = ticketService.obtenerTicketPorId(id);
@@ -50,6 +53,7 @@ public class TicketController {
     // 3. LISTAR TODOS LOS TICKETS (GET /api/tickets)
     // ===========================================
     @GetMapping
+    @PreAuthorize("hasRole('TECNICO')")
     public ResponseEntity<List<TicketResponseDTO>> listarTodos() {
         List<TicketResponseDTO> tickets = ticketService.listarTodos();
         return ResponseEntity.ok(tickets);
@@ -59,6 +63,7 @@ public class TicketController {
     // 4. TICKETS DISPONIBLES PARA TÉCNICOS (GET /api/tickets/disponibles)
     // ===========================================
     @GetMapping("/disponibles")
+    @PreAuthorize("hasRole('TECNICO')")
     public ResponseEntity<List<TicketResponseDTO>> ticketsDisponibles() {
         List<TicketResponseDTO> disponibles = ticketService.ticketsDisponibles();
         return ResponseEntity.ok(disponibles);
@@ -81,6 +86,7 @@ public class TicketController {
     // 6. CERRAR TICKET (PUT /api/tickets/{id}/cerrar)
     // ===========================================
     @PutMapping("/{id}/cerrar")
+    @PreAuthorize("hasRole('TECNICO')")
     public ResponseEntity<?> cerrarTicket(@PathVariable Long id, @RequestParam Long tecnicoId) {
         try {
             TicketResponseDTO ticketCerrado = ticketService.cerrarTicket(id, tecnicoId);

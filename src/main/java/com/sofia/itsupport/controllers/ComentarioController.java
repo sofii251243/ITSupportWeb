@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class ComentarioController {
     // 1. CREAR COMENTARIO (POST /api/comentarios)
     // ===========================================
     @PostMapping
+    @PreAuthorize("hasAnyRole('ENCARGADO', 'TECNICO')")
     public ResponseEntity<?> crearComentario(@Valid @RequestBody CrearComentarioRequest request) {
         try {
             ComentarioResponseDTO nuevoComentario = comentarioService.crearComentario(request);
@@ -36,6 +38,7 @@ public class ComentarioController {
     // 2. OBTENER COMENTARIOS DE UN TICKET (GET /api/comentarios/ticket/{ticketId})
     // ===========================================
     @GetMapping("/ticket/{ticketId}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> obtenerComentariosPorTicket(@PathVariable Long ticketId) {
         try {
             List<ComentarioResponseDTO> comentarios = comentarioService.obtenerComentariosPorTicket(ticketId);
