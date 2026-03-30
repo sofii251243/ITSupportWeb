@@ -32,8 +32,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // Endpoints públicos
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/usuarios/registro").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/usuarios/registro").permitAll()
                         // Cualquier otra ruta requiere autenticación (pero luego afinamos con @PreAuthorize)
                         .anyRequest().authenticated()
                 )
