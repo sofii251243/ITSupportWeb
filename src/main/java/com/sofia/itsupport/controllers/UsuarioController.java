@@ -1,6 +1,7 @@
 package com.sofia.itsupport.controllers;
 
 import com.sofia.itsupport.dto.request.CrearUsuarioRequest;
+import com.sofia.itsupport.dto.request.UsuarioUpdateRequest;
 import com.sofia.itsupport.dto.response.UsuarioResponseDTO;
 import com.sofia.itsupport.services.UsuarioService;
 import jakarta.validation.Valid;
@@ -9,7 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -113,6 +115,30 @@ public class UsuarioController {
             Map<String, String> error = new HashMap<>();
             error.put("error", e.getMessage());
             return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/me")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> obtenerMiPerfil() {
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String email = auth.getName();
+            UsuarioResponseDTO usuario = usuarioService.obtenerUsuarioPorEmail(email);
+            return ResponseEntity.ok(usuario);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/me")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> actualizarMiPerfil(@Valid @RequestBody UsuarioUpdateRequest request) {
+        try {
+            UsuarioResponseDTO usuarioActualizado = usuarioService.actualizarUsuarioAutenticado(request);
+            return ResponseEntity.ok(usuarioActualizado);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 }

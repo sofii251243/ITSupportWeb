@@ -284,4 +284,33 @@ public class TicketService {
 
         return dto;
     }
+
+    public List<TicketResponseDTO> getTicketsByTecnico(Usuario tecnico) {
+        return ticketRepository.findByTecnico(tecnico).stream()
+                .map(this::convertirADTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<TicketResponseDTO> getTicketsByEncargado(Usuario encargado) {
+        return ticketRepository.findByEncargado(encargado).stream()
+                .map(this::convertirADTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<TicketResponseDTO> getTicketsByEncargadoId(Long encargadoId) {
+        Usuario encargado = usuarioRepository.findById(encargadoId)
+                .orElseThrow(() -> new RuntimeException("Encargado no encontrado"));
+        return ticketRepository.findByEncargado(encargado).stream()
+                .map(this::convertirADTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<TicketResponseDTO> getTicketsByTecnicoId(Long tecnicoId) {
+        Usuario tecnico = usuarioRepository.findById(tecnicoId)
+                .orElseThrow(() -> new RuntimeException("Técnico no encontrado"));
+        return ticketRepository.findByTecnico(tecnico).stream()
+                .map(this::convertirADTO)
+                .collect(Collectors.toList());
+    }
 }
+

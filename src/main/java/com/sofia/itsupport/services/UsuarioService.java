@@ -1,6 +1,7 @@
 package com.sofia.itsupport.services;
 
 import com.sofia.itsupport.dto.request.CrearUsuarioRequest;
+import com.sofia.itsupport.dto.request.UsuarioUpdateRequest;
 import com.sofia.itsupport.dto.response.UsuarioResponseDTO;
 import com.sofia.itsupport.entities.Area;
 import com.sofia.itsupport.entities.Usuario;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 
 import java.util.List;
@@ -183,5 +185,39 @@ public class UsuarioService {
 
         return "Contraseña actualizada correctamente";
     }
+
+    public UsuarioResponseDTO obtenerUsuarioPorEmail(String email) {
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con email: " + email));
+        return convertirADTO(usuario);
+    }
+
+    public UsuarioResponseDTO actualizarUsuarioAutenticado(UsuarioUpdateRequest request) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // Actualizar campos permitidos
+        if (request.getNombreUsuario() != null && !request.getNombreUsuario().isBlank()) {
+            // Validar que el nuevo nombre no esté ya en uso por otro usuario
+            if (!usuario.getNombreUsuario().equals(request.getNombreUsuario()) &&
+                    usuarioRepository.existsByNombreUsuario(request.getNombreUsuario())) {
+                throw new RuntimeException("El nombre de usuario ya está en uso");
+            }
+            usuario.setNombreUsuario(request.getNombreUsuario());
+        }
+        // Puedes agregar más campos según necesidades
+
+        usuario = usuarioRepository.save(usuario);
+        return convertirADTO(usuario);
+    }
+
+    public Long getAuthenticatedUserId() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        return usuario.getId();
+    }
 }
+
 

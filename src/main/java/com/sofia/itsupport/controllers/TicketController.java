@@ -3,7 +3,9 @@ package com.sofia.itsupport.controllers;
 import com.sofia.itsupport.dto.request.AsignarTicketRequest;
 import com.sofia.itsupport.dto.request.CrearTicketRequest;
 import com.sofia.itsupport.dto.response.TicketResponseDTO;
+import com.sofia.itsupport.entities.Usuario;
 import com.sofia.itsupport.services.TicketService;
+import com.sofia.itsupport.services.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,11 +14,16 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 
 @RestController
 @RequestMapping("/tickets")
 @CrossOrigin(origins = "*")  // Permitir peticiones desde cualquier origen (React, Angular, etc.)
 public class TicketController {
+
+    @Autowired
+    private UsuarioService usuarioService;
 
     @Autowired
     private TicketService ticketService;
@@ -107,5 +114,27 @@ public class TicketController {
         } catch (RuntimeException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+    @GetMapping("/mis-tickets")
+    @PreAuthorize("hasRole('TECNICO')")
+    public ResponseEntity<List<TicketResponseDTO>> misTickets() {
+        Long tecnicoId = usuarioService.getAuthenticatedUserId();
+        List<TicketResponseDTO> tickets = ticketService.getTicketsByTecnicoId(tecnicoId);
+        return ResponseEntity.ok(tickets);
+    }
+
+    @GetMapping("/mis-creados")
+    @PreAuthorize("hasRole('ENCARGADO')")
+    public ResponseEntity<List<TicketResponseDTO>> misTicketsCreados() {
+        Long encargadoId = usuarioService.getAuthenticatedUserId();
+        List<TicketResponseDTO> tickets = ticketService.getTicketsByEncargadoId(encargadoId);
+        return ResponseEntity.ok(tickets);
+    }
+
+    @GetMapping("/encargado/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<TicketResponseDTO>> ticketsPorEncargado(@PathVariable Long id) {
+        List<TicketResponseDTO> tickets = ticketService.getTicketsByEncargadoId(id);
+        return ResponseEntity.ok(tickets);
     }
 }
