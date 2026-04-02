@@ -3,6 +3,7 @@ package com.sofia.itsupport.config;
 import com.sofia.itsupport.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -28,20 +29,21 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .cors(cors -> {})  // ← HABILITA CORS (usa la configuración global)
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // Permitir preflight OPTIONS para cualquier ruta
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // Endpoints públicos
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/usuarios/registro").permitAll()
-                        // Cualquier otra ruta requiere autenticación (pero luego afinamos con @PreAuthorize)
+                        .requestMatchers("/auth/**", "/usuarios/registro").permitAll()
+                        // Cualquier otra ruta requiere autenticación
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
