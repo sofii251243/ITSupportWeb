@@ -32,7 +32,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // Endpoints públicos
-                        .requestMatchers("/auth/**", "/swagger-ui.html", "/swagger-ui/**", "/api-docs/**").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/usuarios/registro").permitAll()
                         // Cualquier otra ruta requiere autenticación (pero luego afinamos con @PreAuthorize)
                         .anyRequest().authenticated()
