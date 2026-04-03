@@ -209,13 +209,17 @@ public class UsuarioService {
             throw new RuntimeException("El nombre de usuario ya existe");
         }
 
-        // Actualizar todos los campos
+        // Actualizar campos obligatorios
         usuario.setNombreUsuario(request.getNombreUsuario());
         usuario.setApellidoPaterno(request.getApellidoPaterno());
         usuario.setApellidoMaterno(request.getApellidoMaterno());
         usuario.setEmail(request.getEmail());
         usuario.setRol(request.getRol());
-        usuario.setContrasenaHash(passwordEncoder.encode(request.getContrasena()));
+
+        // Actualizar contraseña solo si se proporciona y no está vacía
+        if (request.getContrasena() != null && !request.getContrasena().isBlank()) {
+            usuario.setContrasenaHash(passwordEncoder.encode(request.getContrasena()));
+        }
 
         usuario = usuarioRepository.save(usuario);
         return convertirADTO(usuario);
