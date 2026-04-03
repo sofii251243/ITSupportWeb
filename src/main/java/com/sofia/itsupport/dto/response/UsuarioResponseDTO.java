@@ -6,6 +6,9 @@ import com.sofia.itsupport.enums.EstadoCuenta;
 public class UsuarioResponseDTO {
     private Long id;
     private String nombreUsuario;
+    private String apellidoPaterno;
+    private String apellidoMaterno;
+    private String nombreCompleto; // opcional, concatenación de apellidos + nombreUsuario
     private String email;
     private RolUsuario rol;
     private EstadoCuenta estadoCuenta;
@@ -23,6 +26,15 @@ public class UsuarioResponseDTO {
 
     public String getNombreUsuario() { return nombreUsuario; }
     public void setNombreUsuario(String nombreUsuario) { this.nombreUsuario = nombreUsuario; }
+
+    public String getApellidoPaterno() { return apellidoPaterno; }
+    public void setApellidoPaterno(String apellidoPaterno) { this.apellidoPaterno = apellidoPaterno; }
+
+    public String getApellidoMaterno() { return apellidoMaterno; }
+    public void setApellidoMaterno(String apellidoMaterno) { this.apellidoMaterno = apellidoMaterno; }
+
+    public String getNombreCompleto() { return nombreCompleto; }
+    public void setNombreCompleto(String nombreCompleto) { this.nombreCompleto = nombreCompleto; }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }

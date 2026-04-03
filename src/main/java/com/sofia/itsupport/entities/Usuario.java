@@ -18,6 +18,12 @@ public class Usuario {
     @Column(name = "nombre_usuario", length = 50, nullable = false, unique = true)
     private String nombreUsuario;
 
+    @Column(name = "apellido_paterno", length = 50, nullable = false)
+    private String apellidoPaterno;
+
+    @Column(name = "apellido_materno", length = 50, nullable = false)
+    private String apellidoMaterno;
+
     @Column(name = "email", length = 100, nullable = false, unique = true)
     private String email;
 
@@ -55,119 +61,68 @@ public class Usuario {
     // Constructores
     public Usuario() {}
 
-    public Usuario(String nombreUsuario, String email, String contrasenaHash, RolUsuario rol) {
+    public Usuario(String nombreUsuario, String apellidoPaterno, String apellidoMaterno,
+                   String email, String contrasenaHash, RolUsuario rol) {
         this.nombreUsuario = nombreUsuario;
+        this.apellidoPaterno = apellidoPaterno;
+        this.apellidoMaterno = apellidoMaterno;
         this.email = email;
         this.contrasenaHash = contrasenaHash;
         this.rol = rol;
     }
 
     // Getters y Setters
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getNombreUsuario() { return nombreUsuario; }
+    public void setNombreUsuario(String nombreUsuario) { this.nombreUsuario = nombreUsuario; }
 
-    public String getNombreUsuario() {
-        return nombreUsuario;
-    }
+    public String getApellidoPaterno() { return apellidoPaterno; }
+    public void setApellidoPaterno(String apellidoPaterno) { this.apellidoPaterno = apellidoPaterno; }
 
-    public void setNombreUsuario(String nombreUsuario) {
-        this.nombreUsuario = nombreUsuario;
-    }
+    public String getApellidoMaterno() { return apellidoMaterno; }
+    public void setApellidoMaterno(String apellidoMaterno) { this.apellidoMaterno = apellidoMaterno; }
 
-    public String getEmail() {
-        return email;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public String getContrasenaHash() { return contrasenaHash; }
+    public void setContrasenaHash(String contrasenaHash) { this.contrasenaHash = contrasenaHash; }
 
-    public String getContrasenaHash() {
-        return contrasenaHash;
-    }
+    public RolUsuario getRol() { return rol; }
+    public void setRol(RolUsuario rol) { this.rol = rol; }
 
-    public void setContrasenaHash(String contrasenaHash) {
-        this.contrasenaHash = contrasenaHash;
-    }
+    public EstadoCuenta getEstadoCuenta() { return estadoCuenta; }
+    public void setEstadoCuenta(EstadoCuenta estadoCuenta) { this.estadoCuenta = estadoCuenta; }
 
-    public RolUsuario getRol() {
-        return rol;
-    }
+    public LocalDateTime getFechaCreacion() { return fechaCreacion; }
+    public void setFechaCreacion(LocalDateTime fechaCreacion) { this.fechaCreacion = fechaCreacion; }
 
-    public void setRol(RolUsuario rol) {
-        this.rol = rol;
-    }
+    public Area getArea() { return area; }
+    public void setArea(Area area) { this.area = area; }
 
-    public EstadoCuenta getEstadoCuenta() {
-        return estadoCuenta;
-    }
+    public List<Ticket> getTicketsCreados() { return ticketsCreados; }
+    public void setTicketsCreados(List<Ticket> ticketsCreados) { this.ticketsCreados = ticketsCreados; }
 
-    public void setEstadoCuenta(EstadoCuenta estadoCuenta) {
-        this.estadoCuenta = estadoCuenta;
-    }
+    public List<Ticket> getTicketsAsignados() { return ticketsAsignados; }
+    public void setTicketsAsignados(List<Ticket> ticketsAsignados) { this.ticketsAsignados = ticketsAsignados; }
 
-    public LocalDateTime getFechaCreacion() {
-        return fechaCreacion;
-    }
-
-    public void setFechaCreacion(LocalDateTime fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
-    }
-
-    public Area getArea() {
-        return area;
-    }
-
-    public void setArea(Area area) {
-        this.area = area;
-    }
-
-    public List<Ticket> getTicketsCreados() {
-        return ticketsCreados;
-    }
-
-    public void setTicketsCreados(List<Ticket> ticketsCreados) {
-        this.ticketsCreados = ticketsCreados;
-    }
-
-    public List<Ticket> getTicketsAsignados() {
-        return ticketsAsignados;
-    }
-
-    public void setTicketsAsignados(List<Ticket> ticketsAsignados) {
-        this.ticketsAsignados = ticketsAsignados;
-    }
-
-    public List<Comentario> getComentarios() {
-        return comentarios;
-    }
-
-    public void setComentarios(List<Comentario> comentarios) {
-        this.comentarios = comentarios;
-    }
+    public List<Comentario> getComentarios() { return comentarios; }
+    public void setComentarios(List<Comentario> comentarios) { this.comentarios = comentarios; }
 
     @PrePersist
     protected void onCreate() {
         fechaCreacion = LocalDateTime.now();
     }
 
-    // Método helper para validar si es encargado
-    public boolean isEncargado() {
-        return rol == RolUsuario.encargado;
+    // Método helper para nombre completo
+    public String getNombreCompleto() {
+        return (apellidoPaterno + " " + apellidoMaterno + " " + nombreUsuario).trim();
     }
 
-    // Método helper para validar si es tecnico
-    public boolean isTecnico() {
-        return rol == RolUsuario.tecnico;
-    }
-
-    // Método helper para validar si es admin
-    public boolean isAdmin() {
-        return rol == RolUsuario.admin;
-    }
+    // Métodos helper para roles
+    public boolean isEncargado() { return rol == RolUsuario.encargado; }
+    public boolean isTecnico() { return rol == RolUsuario.tecnico; }
+    public boolean isAdmin() { return rol == RolUsuario.admin; }
 }
