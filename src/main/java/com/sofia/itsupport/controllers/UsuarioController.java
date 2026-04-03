@@ -1,5 +1,6 @@
 package com.sofia.itsupport.controllers;
 
+import com.sofia.itsupport.dto.request.AdminUsuarioUpdateRequest;
 import com.sofia.itsupport.dto.request.CrearUsuarioRequest;
 import com.sofia.itsupport.dto.request.UsuarioUpdateRequest;
 import com.sofia.itsupport.dto.response.UsuarioResponseDTO;
@@ -136,6 +137,18 @@ public class UsuarioController {
     public ResponseEntity<?> actualizarMiPerfil(@Valid @RequestBody UsuarioUpdateRequest request) {
         try {
             UsuarioResponseDTO usuarioActualizado = usuarioService.actualizarUsuarioAutenticado(request);
+            return ResponseEntity.ok(usuarioActualizado);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+    @PutMapping("/admin/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> actualizarUsuarioPorAdmin(
+            @PathVariable Long id,
+            @Valid @RequestBody AdminUsuarioUpdateRequest request) {
+        try {
+            UsuarioResponseDTO usuarioActualizado = usuarioService.actualizarUsuarioPorAdmin(id, request);
             return ResponseEntity.ok(usuarioActualizado);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

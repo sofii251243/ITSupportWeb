@@ -1,5 +1,6 @@
 package com.sofia.itsupport.services;
 
+import com.sofia.itsupport.dto.request.AdminUsuarioUpdateRequest;
 import com.sofia.itsupport.dto.request.CrearUsuarioRequest;
 import com.sofia.itsupport.dto.request.UsuarioUpdateRequest;
 import com.sofia.itsupport.dto.response.UsuarioResponseDTO;
@@ -217,6 +218,33 @@ public class UsuarioService {
         Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         return usuario.getId();
+    }
+
+    @Transactional
+    public UsuarioResponseDTO actualizarUsuarioPorAdmin(Long id, AdminUsuarioUpdateRequest request) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
+
+        // Validar unicidad de email (si cambió)
+        if (!usuario.getEmail().equals(request.getEmail()) &&
+                usuarioRepository.existsByEmail(request.getEmail())) {
+            throw new RuntimeException("El email ya está registrado");
+        }
+        // Validar unicidad de nombre de usuario (si cambió)
+        if (!usuario.getNombreUsuario().equals(request.getNombreUsuario()) &&
+                usuarioRepository.existsByNombreUsuario(request.getNombreUsuario())) {
+            throw new RuntimeException("El nombre de usuario ya existe");
+        }
+
+        // Actualizar campos
+        usuario.setNombreUsuario(request.getNombreUsuario());
+        usuario.setEmail(request.getEmail());
+        usuario.setRol(request.getRol());
+        // Hashear la nueva contraseña
+        usuario.setContrasenaHash(passwordEncoder.encode(request.getContrasena()));
+
+        usuario = usuarioRepository.save(usuario);
+        return convertirADTO(usuario);
     }
 }
 
