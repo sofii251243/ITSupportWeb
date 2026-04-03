@@ -10,7 +10,7 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("itsupport-front-production.up.railway.app") // solo tu frontend
+                .allowedOrigins("https://it-support-front.vercel.app/") // solo tu frontend
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(false); // o true si usas cookies, pero entonces allowedOrigins no puede ser "*"
