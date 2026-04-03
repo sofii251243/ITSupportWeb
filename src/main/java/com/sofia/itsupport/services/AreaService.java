@@ -209,4 +209,16 @@ public class AreaService {
 
         return dto;
     }
+
+    @Transactional
+    public AreaResponseDTO cambiarSucursal(Long areaId, Long nuevaSucursalId) {
+        Area area = areaRepository.findById(areaId)
+                .orElseThrow(() -> new RuntimeException("Área no encontrada con ID: " + areaId));
+        Sucursal nuevaSucursal = sucursalRepository.findById(nuevaSucursalId)
+                .orElseThrow(() -> new RuntimeException("Sucursal no encontrada con ID: " + nuevaSucursalId));
+
+        area.setSucursal(nuevaSucursal);
+        area = areaRepository.save(area);
+        return convertirADTO(area);
+    }
 }

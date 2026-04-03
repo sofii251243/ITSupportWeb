@@ -1,5 +1,6 @@
 package com.sofia.itsupport.controllers;
 
+import com.sofia.itsupport.dto.request.CambiarSucursalAreaRequest;
 import com.sofia.itsupport.dto.request.CrearAreaRequest;
 import com.sofia.itsupport.dto.response.AreaResponseDTO;
 import com.sofia.itsupport.services.AreaService;
@@ -128,6 +129,19 @@ public class AreaController {
         try {
             AreaResponseDTO area = areaService.asignarEncargado(areaId, usuarioId);
             return ResponseEntity.ok(area);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/{areaId}/sucursal")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> cambiarSucursalArea(
+            @PathVariable Long areaId,
+            @Valid @RequestBody CambiarSucursalAreaRequest request) {
+        try {
+            AreaResponseDTO areaActualizada = areaService.cambiarSucursal(areaId, request.getSucursalId());
+            return ResponseEntity.ok(areaActualizada);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
