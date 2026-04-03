@@ -6,10 +6,14 @@ import java.util.List;
 public class SucursalResponseDTO {
     private Long id;
     private String nombre;
+    private String direccionFisica;
+    private String telefono;
+    private String horarioOperacion;
+    private String zona;
     private EstadoGeneral estado;
-    private Integer totalAreas;        // Cuántas áreas tiene
-    private Integer totalTickets;       // Cuántos tickets en total
-    private List<String> areasNombres;  // Solo nombres, no objetos completos
+    private Integer totalAreas;
+    private Integer totalTickets;
+    private List<String> areasNombres;
 
     public SucursalResponseDTO() {}
 
@@ -19,6 +23,18 @@ public class SucursalResponseDTO {
 
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
+
+    public String getDireccionFisica() { return direccionFisica; }
+    public void setDireccionFisica(String direccionFisica) { this.direccionFisica = direccionFisica; }
+
+    public String getTelefono() { return telefono; }
+    public void setTelefono(String telefono) { this.telefono = telefono; }
+
+    public String getHorarioOperacion() { return horarioOperacion; }
+    public void setHorarioOperacion(String horarioOperacion) { this.horarioOperacion = horarioOperacion; }
+
+    public String getZona() { return zona; }
+    public void setZona(String zona) { this.zona = zona; }
 
     public EstadoGeneral getEstado() { return estado; }
     public void setEstado(EstadoGeneral estado) { this.estado = estado; }

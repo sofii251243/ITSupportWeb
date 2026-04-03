@@ -17,6 +17,18 @@ public class Sucursal {
     @Column(name = "nombre", length = 100, nullable = false)
     private String nombre;
 
+    @Column(name = "direccion_fisica", length = 255, nullable = false)
+    private String direccionFisica;
+
+    @Column(name = "telefono", length = 20, nullable = false)
+    private String telefono;
+
+    @Column(name = "horario_operacion", length = 50, nullable = false)
+    private String horarioOperacion; // Ej: "24 horas", "Lun-Vie 9-18"
+
+    @Column(name = "zona", length = 100, nullable = false)
+    private String zona;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false)
     private EstadoGeneral estado = EstadoGeneral.activo;
@@ -24,7 +36,7 @@ public class Sucursal {
     @Column(name = "fecha_creacion", nullable = false, updatable = false)
     private LocalDateTime fechaCreacion;
 
-    // Relación OneToMany con Area (una sucursal tiene muchas áreas)
+    // Relación OneToMany con Area
     @OneToMany(mappedBy = "sucursal", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Area> areas = new ArrayList<>();
 
@@ -35,48 +47,34 @@ public class Sucursal {
         this.nombre = nombre;
     }
 
-    // Getters y Setters
-    public Long getId() {
-        return id;
-    }
+    // Getters y Setters (incluyendo los nuevos)
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public String getNombre() {
-        return nombre;
-    }
+    public String getDireccionFisica() { return direccionFisica; }
+    public void setDireccionFisica(String direccionFisica) { this.direccionFisica = direccionFisica; }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+    public String getTelefono() { return telefono; }
+    public void setTelefono(String telefono) { this.telefono = telefono; }
 
-    public EstadoGeneral getEstado() {
-        return estado;
-    }
+    public String getHorarioOperacion() { return horarioOperacion; }
+    public void setHorarioOperacion(String horarioOperacion) { this.horarioOperacion = horarioOperacion; }
 
-    public void setEstado(EstadoGeneral estado) {
-        this.estado = estado;
-    }
+    public String getZona() { return zona; }
+    public void setZona(String zona) { this.zona = zona; }
 
-    public LocalDateTime getFechaCreacion() {
-        return fechaCreacion;
-    }
+    public EstadoGeneral getEstado() { return estado; }
+    public void setEstado(EstadoGeneral estado) { this.estado = estado; }
 
-    public void setFechaCreacion(LocalDateTime fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
-    }
+    public LocalDateTime getFechaCreacion() { return fechaCreacion; }
+    public void setFechaCreacion(LocalDateTime fechaCreacion) { this.fechaCreacion = fechaCreacion; }
 
-    public List<Area> getAreas() {
-        return areas;
-    }
+    public List<Area> getAreas() { return areas; }
+    public void setAreas(List<Area> areas) { this.areas = areas; }
 
-    public void setAreas(List<Area> areas) {
-        this.areas = areas;
-    }
-
-    // Método helper para agregar áreas
     public void addArea(Area area) {
         areas.add(area);
         area.setSucursal(this);

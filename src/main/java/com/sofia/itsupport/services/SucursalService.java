@@ -1,5 +1,6 @@
 package com.sofia.itsupport.services;
 
+import com.sofia.itsupport.dto.request.CrearSucursalRequest;
 import com.sofia.itsupport.dto.response.SucursalResponseDTO;
 import com.sofia.itsupport.entities.Sucursal;
 import com.sofia.itsupport.enums.EstadoGeneral;
@@ -21,17 +22,21 @@ public class SucursalService {
     // CREAR SUCURSAL
     // ===========================================
     @Transactional
-    public SucursalResponseDTO crearSucursal(String nombre) {
+    public SucursalResponseDTO crearSucursal(CrearSucursalRequest request) {
         // Validar que no exista una sucursal con el mismo nombre
         boolean existe = sucursalRepository.findAll().stream()
-                .anyMatch(s -> s.getNombre().equalsIgnoreCase(nombre));
+                .anyMatch(s -> s.getNombre().equalsIgnoreCase(request.getNombre()));
 
         if (existe) {
-            throw new RuntimeException("Ya existe una sucursal con el nombre: " + nombre);
+            throw new RuntimeException("Ya existe una sucursal con el nombre: " + request.getNombre());
         }
 
         Sucursal sucursal = new Sucursal();
-        sucursal.setNombre(nombre);
+        sucursal.setNombre(request.getNombre());
+        sucursal.setDireccionFisica(request.getDireccionFisica());
+        sucursal.setTelefono(request.getTelefono());
+        sucursal.setHorarioOperacion(request.getHorarioOperacion());
+        sucursal.setZona(request.getZona());
         sucursal.setEstado(EstadoGeneral.activo);
 
         sucursal = sucursalRepository.save(sucursal);
@@ -70,14 +75,20 @@ public class SucursalService {
     }
 
     // ===========================================
-    // ACTUALIZAR SUCURSAL
+    // ACTUALIZAR SUCURSAL (ahora actualiza todos los campos)
     // ===========================================
     @Transactional
-    public SucursalResponseDTO actualizarSucursal(Long id, String nuevoNombre) {
+    public SucursalResponseDTO actualizarSucursal(Long id, CrearSucursalRequest request) {
         Sucursal sucursal = sucursalRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Sucursal no encontrada"));
 
-        sucursal.setNombre(nuevoNombre);
+        // Actualizar todos los campos
+        sucursal.setNombre(request.getNombre());
+        sucursal.setDireccionFisica(request.getDireccionFisica());
+        sucursal.setTelefono(request.getTelefono());
+        sucursal.setHorarioOperacion(request.getHorarioOperacion());
+        sucursal.setZona(request.getZona());
+
         sucursal = sucursalRepository.save(sucursal);
 
         return convertirADTO(sucursal);
@@ -127,6 +138,10 @@ public class SucursalService {
 
         dto.setId(sucursal.getId());
         dto.setNombre(sucursal.getNombre());
+        dto.setDireccionFisica(sucursal.getDireccionFisica());
+        dto.setTelefono(sucursal.getTelefono());
+        dto.setHorarioOperacion(sucursal.getHorarioOperacion());
+        dto.setZona(sucursal.getZona());
         dto.setEstado(sucursal.getEstado());
 
         // Total de áreas

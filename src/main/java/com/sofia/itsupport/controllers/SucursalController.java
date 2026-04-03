@@ -20,27 +20,24 @@ public class SucursalController {
     @Autowired
     private SucursalService sucursalService;
 
-    // ===========================================
-    // 1. CREAR SUCURSAL (POST /api/sucursales)
-    // ===========================================
     @GetMapping("/ping")
     public String ping() {
         return "pong";
     }
+
+    // 1. CREAR SUCURSAL (POST /api/sucursales) - recibe el DTO completo
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> crearSucursal(@Valid @RequestBody CrearSucursalRequest request) {
         try {
-            SucursalResponseDTO nuevaSucursal = sucursalService.crearSucursal(request.getNombre());
+            SucursalResponseDTO nuevaSucursal = sucursalService.crearSucursal(request);
             return new ResponseEntity<>(nuevaSucursal, HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
-    // ===========================================
     // 2. OBTENER SUCURSAL POR ID (GET /api/sucursales/{id})
-    // ===========================================
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> obtenerSucursal(@PathVariable Long id) {
@@ -52,9 +49,7 @@ public class SucursalController {
         }
     }
 
-    // ===========================================
     // 3. LISTAR TODAS LAS SUCURSALES (GET /api/sucursales)
-    // ===========================================
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<SucursalResponseDTO>> listarTodas() {
@@ -62,9 +57,7 @@ public class SucursalController {
         return ResponseEntity.ok(sucursales);
     }
 
-    // ===========================================
     // 4. LISTAR SUCURSALES ACTIVAS (GET /api/sucursales/activas)
-    // ===========================================
     @GetMapping("/activas")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<SucursalResponseDTO>> listarActivas() {
@@ -72,23 +65,19 @@ public class SucursalController {
         return ResponseEntity.ok(sucursales);
     }
 
-    // ===========================================
-    // 5. ACTUALIZAR SUCURSAL (PUT /api/sucursales/{id})
-    // ===========================================
+    // 5. ACTUALIZAR SUCURSAL (PUT /api/sucursales/{id}) - recibe el DTO completo en el body
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> actualizarSucursal(@PathVariable Long id, @RequestParam String nuevoNombre) {
+    public ResponseEntity<?> actualizarSucursal(@PathVariable Long id, @Valid @RequestBody CrearSucursalRequest request) {
         try {
-            SucursalResponseDTO sucursal = sucursalService.actualizarSucursal(id, nuevoNombre);
+            SucursalResponseDTO sucursal = sucursalService.actualizarSucursal(id, request);
             return ResponseEntity.ok(sucursal);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
-    // ===========================================
     // 6. DESACTIVAR SUCURSAL (PUT /api/sucursales/{id}/desactivar)
-    // ===========================================
     @PutMapping("/{id}/desactivar")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> desactivarSucursal(@PathVariable Long id) {
@@ -100,9 +89,7 @@ public class SucursalController {
         }
     }
 
-    // ===========================================
     // 7. ACTIVAR SUCURSAL (PUT /api/sucursales/{id}/activar)
-    // ===========================================
     @PutMapping("/{id}/activar")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> activarSucursal(@PathVariable Long id) {
