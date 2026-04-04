@@ -60,7 +60,7 @@ public class TicketController {
     // 3. LISTAR TODOS LOS TICKETS (GET /api/tickets)
     // ===========================================
     @GetMapping
-    @PreAuthorize("hasRole('TECNICO')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')")
     public ResponseEntity<List<TicketResponseDTO>> listarTodos() {
         List<TicketResponseDTO> tickets = ticketService.listarTodos();
         return ResponseEntity.ok(tickets);
