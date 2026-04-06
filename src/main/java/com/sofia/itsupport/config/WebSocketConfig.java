@@ -25,7 +25,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // Endpoint que el cliente usará para conectarse
         registry.addEndpoint("/ws")
-                .setAllowedOriginPatterns("*")  // En producción, restringir orígenes
+                .setAllowedOriginPatterns("https://it-support-front.vercel.app/")  // En producción, restringir orígenes
                 .withSockJS();  // Habilita SockJS como fallback
     }
     // Define un scheduler con pool fijo para los heartbeats
