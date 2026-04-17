@@ -36,7 +36,7 @@ public class SecurityConfig {
                         // Permitir preflight OPTIONS para cualquier ruta
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // Endpoints públicos
-                        .requestMatchers("/auth/**", "/usuarios/registro","/ws/**").permitAll()
+                        .requestMatchers("/auth/**","/ws/**").permitAll()
                         // Cualquier otra ruta requiere autenticación
                         .anyRequest().authenticated()
                 )
