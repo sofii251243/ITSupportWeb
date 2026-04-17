@@ -29,7 +29,6 @@ public class UsuarioController {
     // 1. REGISTRAR USUARIO (POST /api/usuarios)
     // ===========================================
     @PostMapping("/registro")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> registrarUsuario(@Valid @RequestBody CrearUsuarioRequest request) {
         try {
             UsuarioResponseDTO nuevoUsuario = usuarioService.registrarUsuario(request);
